@@ -7,8 +7,17 @@
  * need to use are documented accordingly near the end.
  */
 
-import { initTRPC } from "@trpc/server";
+import { AssetsRepository } from "@/repositories/AssetsRepository";
+import { UserAssetsRepository } from "@/repositories/UserAssetsRepository";
+import { UserInfoRepository } from "@/repositories/UserInfoRepository";
+import { UserTransactionsRepository } from "@/repositories/UserTransactionsRepository";
+import { AssetsRepositoryFirebase } from "@/repositories/firestore/AssetsRepositoryFirebase";
+import { UserAssetsRepositoryFirebase } from "@/repositories/firestore/UserAssetsRepositoryFirestore";
+import { UserInfoRepositoryFirebase } from "@/repositories/firestore/UserInfoRepositoryFirebase";
+import { UserTransactionsRepositoryFirestore } from "@/repositories/firestore/UserTransactionsRepositoryFirestore";
+import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { type DecodedIdToken, getAuth } from "firebase-admin/auth";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -20,7 +29,13 @@ import { ZodError } from "zod";
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 
-type CreateContextOptions = Record<string, never>;
+type CreateContextOptions = {
+  session: DecodedIdToken | null
+  userTransactionsRepository: UserTransactionsRepository,
+  userAssetsRepository: UserAssetsRepository,
+  assetsRepository: AssetsRepository,
+  userInfoRepository: UserInfoRepository,
+};
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -32,8 +47,12 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (_opts: CreateContextOptions) => {
-  return {};
+const createInnerTRPCContext = (opts: CreateContextOptions) => {
+  return opts
+  // return {
+  //   session: opts.session,
+  //   userTransactionsRepository: opts.userTransactionsRepository
+  // };
 };
 
 /**
@@ -42,8 +61,26 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+export const createTRPCContext = async ({ req, res }: CreateNextContextOptions) => {
+  try {
+    const session = await getAuth().verifyIdToken(req.headers.authorization?.split(" ")[1] ?? "", true).catch(() => null);
+    const assetsRepository = new AssetsRepositoryFirebase()
+  
+    return createInnerTRPCContext({
+      session,
+      userTransactionsRepository: new UserTransactionsRepositoryFirestore(session?.uid ?? ""),
+      userAssetsRepository: new UserAssetsRepositoryFirebase(assetsRepository, session?.uid ?? ""),
+      assetsRepository,
+      userInfoRepository: new UserInfoRepositoryFirebase(session?.uid ?? ""),
+    });
+  }
+  catch (error) {
+    console.error(error)
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Erro ao processar a requisição"
+    })
+  }
 };
 
 /**
@@ -90,3 +127,13 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+export const isAuthenticated = t.middleware(({ ctx, next }) => {
+  if (!ctx.session) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx
+  })
+});
+
+export const authenticatedProcedure = publicProcedure.use(isAuthenticated);
