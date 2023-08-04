@@ -1,6 +1,6 @@
 import LandingLayout from '@/components/Landing/Layout';
-import { Title, Text, Container, Button, Overlay, createStyles, rem } from '@mantine/core';
-import { NextPage } from 'next';
+import { Button, Container, Overlay, Text, Title, createStyles, rem } from '@mantine/core';
+import { type NextPage } from 'next';
 import Link from 'next/link';
 
 const useStyles = createStyles((theme) => ({
@@ -42,8 +42,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   highlight: {
-    // @ts-ignore
-    color: theme.colors[theme.primaryColor][4],
+    color: theme.colors[theme.primaryColor ?? 'dark']?.[4] ?? theme.colors.dark[4],
   },
 
   description: {
@@ -95,7 +94,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const IndexPage: NextPage = () => {
-  const { classes, cx } = useStyles();
+  const { classes } = useStyles();
 
   return <LandingLayout>
     <div className={classes.wrapper}>

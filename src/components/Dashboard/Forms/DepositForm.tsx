@@ -1,20 +1,20 @@
 import { currencyIconMap } from '@/components/Icons';
 import { useAssets, useInvalidateBalanceRelatedQueries } from '@/lib/firebase/client';
-import { Asset } from '@/repositories/AssetsRepository';
+import { type Asset } from '@/repositories/AssetsRepository';
 import { api } from '@/utils/api';
 import { moneyFormatter } from '@/utils/formatter';
 import { Button, JsonInput, NumberInput, Select, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect } from 'react'
-import { IconType } from 'react-icons/lib';
+import { type IconType } from 'react-icons/lib';
 import { z } from 'zod';
 
 interface DepositFormProps { }
 
 const DepositForm: React.FC<DepositFormProps> = ({ }) => {
     const { data: assets, loading } = useAssets()
-    let [selectedAsset, setSelectedAsset] = React.useState<Asset | undefined>(undefined)
+    const [selectedAsset, setSelectedAsset] = React.useState<Asset | undefined>(undefined)
     const form = useForm({
         initialValues: {
             asset: "",
@@ -29,7 +29,7 @@ const DepositForm: React.FC<DepositFormProps> = ({ }) => {
         setSelectedAsset(assets?.find(a => a.id == form.values.asset))
     }, [form.values.asset])
     const currencySymbol = selectedAsset?.symbol ?? 'USD'
-    const CurrencyIcon = currencyIconMap[currencySymbol] ?? currencyIconMap['USD'] as IconType
+    const CurrencyIcon = currencyIconMap[currencySymbol] ?? currencyIconMap.USD!
     const deposit = api.transactions.deposit.useMutation({
         onSuccess: () => {
             notifications.show({

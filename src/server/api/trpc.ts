@@ -7,10 +7,10 @@
  * need to use are documented accordingly near the end.
  */
 
-import { AssetsRepository } from "@/repositories/AssetsRepository";
-import { UserAssetsRepository } from "@/repositories/UserAssetsRepository";
-import { UserInfoRepository } from "@/repositories/UserInfoRepository";
-import { UserTransactionsRepository } from "@/repositories/UserTransactionsRepository";
+import { type AssetsRepository } from "@/repositories/AssetsRepository";
+import { type UserAssetsRepository } from "@/repositories/UserAssetsRepository";
+import { type UserInfoRepository } from "@/repositories/UserInfoRepository";
+import { type UserTransactionsRepository } from "@/repositories/UserTransactionsRepository";
 import { AssetsRepositoryFirebase } from "@/repositories/firestore/AssetsRepositoryFirebase";
 import { UserAssetsRepositoryFirebase } from "@/repositories/firestore/UserAssetsRepositoryFirestore";
 import { UserInfoRepositoryFirebase } from "@/repositories/firestore/UserInfoRepositoryFirebase";
@@ -61,7 +61,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async ({ req, res }: CreateNextContextOptions) => {
+export const createTRPCContext = async ({ req }: CreateNextContextOptions) => {
   try {
     const session = await getAuth().verifyIdToken(req.headers.authorization?.split(" ")[1] ?? "", true).catch(() => null);
     const assetsRepository = new AssetsRepositoryFirebase()

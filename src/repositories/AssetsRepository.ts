@@ -6,7 +6,7 @@ export interface Asset {
     type: "crypto" | "fiat"
     usdPrice: number
 
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
     createdAt: Date
     updatedAt: Date
 }
@@ -16,5 +16,5 @@ export interface AssetsRepository {
     getAsset: (assetId: string) => Promise<Asset>
     createAsset: (asset: Asset) => Promise<Asset>
     updateAsset: (assetId: string, asset: Asset) => Promise<Asset>
-    deleteAsset: (assetId: string) => Promise<{}>
+    deleteAsset: (assetId: string) => Promise<void>
 }

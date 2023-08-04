@@ -1,7 +1,7 @@
 'use client'
 
 import { useTransactions } from "@/lib/firebase/client";
-import { UserTransaction } from "@/repositories/UserTransactionsRepository";
+import { type UserTransaction } from "@/repositories/UserTransactionsRepository";
 import { moneyFormatter, transactionOperationFormatter } from "@/utils/formatter";
 import { Box, Card, Group, Stack, Text, Title, createStyles, useMantineTheme } from "@mantine/core";
 import { FaMoneyBillWave, FaTrain } from "react-icons/fa6";

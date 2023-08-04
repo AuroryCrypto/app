@@ -1,28 +1,17 @@
 import {
     createStyles,
     Header,
-    HoverCard,
     Group,
     Button,
     UnstyledButton,
     Text,
-    SimpleGrid,
     ThemeIcon,
-    Anchor,
-    Divider,
-    Center,
     Box,
-    Burger,
-    Drawer,
-    Collapse,
-    ScrollArea,
     rem,
-    Avatar,
     Menu,
     ActionIcon,
 } from '@mantine/core';
 //   import { MantineLogo } from '@mantine/ds';
-import { useDisclosure } from '@mantine/hooks';
 import {
     IconNotification,
     IconCode,
@@ -30,7 +19,6 @@ import {
     IconChartPie3,
     IconFingerprint,
     IconCoin,
-    IconChevronDown,
 } from '@tabler/icons-react';
 import * as fire from "@/lib/firebase/client"
 import Logo from "@/components/Logo.svg"
@@ -131,10 +119,11 @@ const mockdata = [
 ];
 
 export function HeaderMenu() {
-    const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-    const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
+    // const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
+    // const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
     const { classes, theme } = useStyles();
-    const { user, auth } = fire.useAuth()
+    const { auth } = fire.useAuth()
+    const {user} = fire.useFirebaseContext()
 
     const links = mockdata.map((item) => (
         <UnstyledButton className={classes.subLink} key={item.title}>

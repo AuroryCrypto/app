@@ -1,10 +1,9 @@
 import { getFirestore } from "firebase-admin/firestore";
-import { Asset, AssetsRepository } from "../AssetsRepository";
+import { type Asset, type AssetsRepository } from "../AssetsRepository";
 
 export class AssetsRepositoryFirebase implements AssetsRepository {
     private db: FirebaseFirestore.Firestore = getFirestore()
     private collection: FirebaseFirestore.CollectionReference<Asset> = this.db.collection("assets") as FirebaseFirestore.CollectionReference<Asset>
-    constructor() {}
 
     async getAssets(): Promise<Asset[]> {
         const snapshot = await this.collection.get();
@@ -36,8 +35,7 @@ export class AssetsRepositoryFirebase implements AssetsRepository {
             id: assetId,
         } as Asset;
     }
-    async deleteAsset(assetId: string): Promise<{}> {
+    async deleteAsset(assetId: string): Promise<void> {
         await this.collection.doc(assetId).delete();
-        return await Promise.resolve("Asset deleted");
     }
 }

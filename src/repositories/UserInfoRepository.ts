@@ -14,7 +14,7 @@ export interface UserInfo {
     }
     phone: string
 
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
     createdAt: Date
     updatedAt: Date
 }
@@ -23,5 +23,5 @@ export interface UserInfoRepository {
     getUserInfo: () => Promise<UserInfo>
     createUserInfo: (userInfo: UserInfo) => Promise<UserInfo>
     updateUserInfo: (userInfo: UserInfo) => Promise<UserInfo>
-    deleteUserInfo: () => Promise<{}>
+    deleteUserInfo: () => Promise<void>
 }

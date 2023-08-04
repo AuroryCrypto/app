@@ -1,14 +1,14 @@
-import { type AppType } from "next/app";
-import { api } from "@/utils/api";
+import { FirebaseContext, FirebaseQueryProvider, useAuth, useLoginObserver, useUser } from "@/lib/firebase/client";
 import "@/styles/globals.css";
-import Head from "next/head";
+import { api } from "@/utils/api";
 import { MantineProvider } from "@mantine/core";
-import { FirebaseContext, FirebaseQueryContext, FirebaseQueryProvider, useAuth, useLoginObserver } from "@/lib/firebase/client";
-import { Notifications } from "@mantine/notifications";
-import { NavigationProgress } from "@mantine/nprogress";
 import { useHotkeys, useLocalStorage } from "@mantine/hooks";
 import { ModalsProvider } from "@mantine/modals";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Notifications } from "@mantine/notifications";
+import { NavigationProgress } from "@mantine/nprogress";
+import { QueryClient } from "@tanstack/react-query";
+import { type AppType } from "next/app";
+import Head from "next/head";
 
 export const queryClient = new QueryClient()
 
@@ -19,7 +19,8 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   useHotkeys([['mod+k', () => {
     setTheme(theme === 'dark' ? 'light' : 'dark')
   }]])
-  const { user, auth } = useAuth()
+  const { auth } = useAuth()
+  const user = useUser()
 
   return <FirebaseContext.Provider value={{ user, auth }}>
     <FirebaseQueryProvider>

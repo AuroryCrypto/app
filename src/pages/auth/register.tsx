@@ -1,38 +1,34 @@
 "use client";
 
-import { FaApple, FaGoogle, FaMicrosoft } from "react-icons/fa6";
-import {
-    Paper,
-    createStyles,
-    TextInput,
-    PasswordInput,
-    Checkbox,
-    Button,
-    Title,
-    Text,
-    Anchor,
-    rem,
-    Group,
-    Divider,
-    Code,
-    LoadingOverlay,
-    Overlay,
-    Box,
-} from '@mantine/core';
 import LandingLayout from "@/components/Landing/Layout";
-import { signInWithPopup, updateProfile } from "firebase/auth";
-import * as fire from "@/lib/firebase/client"
-import { NextPage } from "next";
-import { api } from "@/utils/api";
+import * as fire from "@/lib/firebase/client";
+import { translateErrorCode } from "@/utils/firebase";
+import {
+    Anchor,
+    Box,
+    Button,
+    Divider,
+    Group,
+    LoadingOverlay,
+    Paper,
+    PasswordInput,
+    Text,
+    TextInput,
+    Title,
+    createStyles,
+    rem
+} from '@mantine/core';
 import { useForm, zodResolver } from "@mantine/form";
-import { z } from "zod";
 import { notifications } from "@mantine/notifications";
-import { sleep, translateErrorCode } from "@/utils/firebase";
+import { updateProfile } from "firebase/auth";
+import { type NextPage } from "next";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { FaApple, FaGoogle, FaMicrosoft } from "react-icons/fa6";
+import { z } from "zod";
 
-import { useState } from "react";
 import Logo from "@/components/Logo";
+import { type FirebaseError } from "firebase/app";
+import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -62,9 +58,7 @@ const useStyles = createStyles((theme) => ({
 
 const RegisterPage: NextPage = () => {
     const { classes } = useStyles();
-    const { data: session } = api.auth.getSession.useQuery()
     const { auth } = fire.useAuth()
-    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const form = useForm({
         initialValues: {
@@ -95,26 +89,33 @@ const RegisterPage: NextPage = () => {
         })
         setLoading(true)
         fire.signUpWithEmailAndPassword(data.email, data.password).then((creds) => {
-            // auth.updateCurrentUser(creds.user)
-            // updateUser.mutate({
-            //     name: data.name
-            // })
             updateProfile(creds.user, {
                 displayName: data.name
             }).then(() => {
+                notifications.update({
+                    id: "register",
+                    title: "Cadastro",
+                    message: "Conta criada com sucesso!",
+                    color: "green",
+                    autoClose: 3000,
+                    withCloseButton: true,
+                    loading: false
+                })
                 location.href = "/account"
+            }).catch((error: FirebaseError) => {
+                notifications.update({
+                    id: "register",
+                    title: "Cadastro",
+                    message: translateErrorCode(error.code),
+                    color: "red",
+                    autoClose: 3000,
+                    withCloseButton: true,
+                    loading: false
+                })
+            }).finally(() => {
+                setLoading(false)
             })
-
-            notifications.update({
-                id: "register",
-                title: "Cadastro",
-                message: "Conta criada com sucesso!",
-                color: "green",
-                autoClose: 3000,
-                withCloseButton: true,
-                loading: false
-            })
-        }).catch((error) => {
+        }).catch((error: FirebaseError) => {
             notifications.update({
                 id: "register",
                 title: "Cadastro",
@@ -143,18 +144,35 @@ const RegisterPage: NextPage = () => {
                 loading: true
             })
             fire.signInWithProvider(provider).then((creds) => {
-                auth.updateCurrentUser(creds.user)
-                notifications.update({
-                    id: "register",
-                    title: "Cadastro",
-                    message: "Conta criada com sucesso!",
-                    color: "green",
-                    autoClose: 5000,
-                    withCloseButton: true,
-                    loading: false
-                })
-                location.href = "/account"
-            }).catch((error) => {
+                auth
+                    .updateCurrentUser(creds.user)
+                    .then(() => {
+                        notifications.update({
+                            id: "register",
+                            title: "Cadastro",
+                            message: "Conta criada com sucesso!",
+                            color: "green",
+                            autoClose: 5000,
+                            withCloseButton: true,
+                            loading: false
+                        })
+                        location.href = "/account"
+                    })
+                    .catch((error: FirebaseError) => {
+                        notifications.update({
+                            id: "register",
+                            title: "Cadastro",
+                            message: translateErrorCode(error.code),
+                            color: "red",
+                            autoClose: 5000,
+                            withCloseButton: true,
+                            loading: false
+                        })
+                    })
+                    .finally(() => {
+                        setLoading(false)
+                    })
+            }).catch((error: FirebaseError) => {
                 notifications.update({
                     id: "register",
                     title: "Cadastro",

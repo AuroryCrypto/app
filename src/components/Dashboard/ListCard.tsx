@@ -1,7 +1,7 @@
 import { transactionOperationFormatter, moneyFormatter } from '@/utils/formatter';
 import { Box, Card, Group, Stack, Text, createStyles } from '@mantine/core';
 import React from 'react'
-import { IconType } from 'react-icons';
+import { type IconType } from 'react-icons';
 import { FaMoneyBillWave } from 'react-icons/fa6';
 
 const useStyles = createStyles((theme) => ({

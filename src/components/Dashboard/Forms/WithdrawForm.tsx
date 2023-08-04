@@ -1,21 +1,21 @@
 import { currencyIconMap } from '@/components/Icons';
 import { useBalance, useInvalidateBalanceRelatedQueries } from '@/lib/firebase/client';
 import { Asset } from '@/repositories/AssetsRepository';
-import { UserAsset } from '@/repositories/UserAssetsRepository';
+import { type UserAsset } from '@/repositories/UserAssetsRepository';
 import { api } from '@/utils/api';
 import { moneyFormatter } from '@/utils/formatter';
 import { Button, JsonInput, NumberInput, Select } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect } from 'react'
-import { IconType } from 'react-icons';
+import { type IconType } from 'react-icons';
 import { z } from 'zod';
 
 interface WithdrawFormProps { }
 
 const WithdrawForm: React.FC<WithdrawFormProps> = ({ }) => {
     const { data: balance, loading } = useBalance()
-    let [selectedAsset, setSelectedAsset] = React.useState<UserAsset | undefined>(undefined)
+    const [selectedAsset, setSelectedAsset] = React.useState<UserAsset | undefined>(undefined)
     const form = useForm({
         initialValues: {
             assetId: "",
@@ -30,7 +30,7 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({ }) => {
         setSelectedAsset(balance?.find(a => a.id == form.values.assetId))
     }, [form.values.assetId])
     const currencySymbol = selectedAsset?.symbol ?? 'USD'
-    const CurrencyIcon = currencyIconMap[currencySymbol] ?? currencyIconMap['USD'] as IconType
+    const CurrencyIcon = currencyIconMap[currencySymbol] ?? currencyIconMap.USD as IconType
     const withdraw = api.transactions.withdraw.useMutation({
         onSuccess: () => {
             notifications.show({

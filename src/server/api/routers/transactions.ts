@@ -1,6 +1,5 @@
+import { authenticatedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { z } from "zod";
-import { authenticatedProcedure, createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { getFirestore, CollectionReference, FieldValue } from "firebase-admin/firestore";
 
 export const transactionsRouter = createTRPCRouter({
     deposit: authenticatedProcedure
@@ -20,10 +19,10 @@ export const transactionsRouter = createTRPCRouter({
                 const amount = parseFloat(input.amount.toFixed(asset.precision))
     
                 // 1. update user asset balance
-                ctx.userAssetsRepository.incrementUserAssetBalance(input.assetId, amount)
+                await ctx.userAssetsRepository.incrementUserAssetBalance(input.assetId, amount)
     
                 // 2. create transaction
-                ctx.userTransactionsRepository.createUserTransaction({
+                await ctx.userTransactionsRepository.createUserTransaction({
                     amount: input.amount,
                     asset: await ctx.assetsRepository.getAsset(input.assetId),
                     type: "income",
@@ -57,10 +56,10 @@ export const transactionsRouter = createTRPCRouter({
                 const amount = parseFloat(input.amount.toFixed(userAsset.precision))
     
                 // 1. update user asset balance
-                ctx.userAssetsRepository.incrementUserAssetBalance(input.assetId, -amount)
+                await ctx.userAssetsRepository.incrementUserAssetBalance(input.assetId, -amount)
     
                 // 2. create transaction
-                ctx.userTransactionsRepository.createUserTransaction({
+                await ctx.userTransactionsRepository.createUserTransaction({
                     amount: input.amount,
                     asset: await ctx.assetsRepository.getAsset(input.assetId),
                     type: "outcome",

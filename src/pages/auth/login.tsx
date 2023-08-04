@@ -1,36 +1,34 @@
 "use client";
 
-import { FaApple, FaGoogle, FaMicrosoft } from "react-icons/fa6";
-import {
-    Paper,
-    createStyles,
-    TextInput,
-    PasswordInput,
-    Checkbox,
-    Button,
-    Title,
-    Text,
-    Anchor,
-    rem,
-    Group,
-    Divider,
-    Code,
-    LoadingOverlay,
-    Box,
-} from '@mantine/core';
 import LandingLayout from "@/components/Landing/Layout";
-import { signInWithPopup, updateCurrentUser } from "firebase/auth";
-import * as fire from "@/lib/firebase/client"
-import { NextPage } from "next";
-import { api } from "@/utils/api";
-import { useForm, zodResolver } from "@mantine/form";
-import { z } from "zod";
-import { notifications } from "@mantine/notifications";
-import { translateErrorCode } from "@/utils/firebase";
-import Link from "next/link";
-import { useState } from "react";
 import Logo from "@/components/Logo";
+import * as fire from "@/lib/firebase/client";
+import { translateErrorCode } from "@/utils/firebase";
+import {
+    Anchor,
+    Box,
+    Button,
+    Divider,
+    Group,
+    LoadingOverlay,
+    Paper,
+    PasswordInput,
+    Text,
+    TextInput,
+    Title,
+    createStyles,
+    rem
+} from '@mantine/core';
+import { useForm, zodResolver } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { type FirebaseError } from "firebase/app";
+import { updateCurrentUser } from "firebase/auth";
+import { type NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { FaApple, FaGoogle, FaMicrosoft } from "react-icons/fa6";
+import { z } from "zod";
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -61,7 +59,6 @@ const useStyles = createStyles((theme) => ({
 const LoginPage: NextPage = () => {
     const router = useRouter()
     const { classes } = useStyles();
-    const { data: session } = api.auth.getSession.useQuery()
     const [loading, setLoading] = useState(false)
     const { auth } = fire.useAuth()
     const form = useForm({
@@ -97,8 +94,32 @@ const LoginPage: NextPage = () => {
                 loading: false
             })
             updateCurrentUser(auth, auth.currentUser)
-            router.push("/account")
-        }).catch((error) => {
+                .then(() => {
+                    router.push("/account").catch(() => {
+                        notifications.update({
+                            id: "login",
+                            title: "Login",
+                            message: "Erro ao redirecionar para a página de conta",
+                            color: "red",
+                            autoClose: 3000,
+                            withCloseButton: true,
+                            loading: false
+                        })
+                    })
+                })
+                .catch((error: FirebaseError) => {
+                    notifications.update({
+                        id: "login",
+                        title: "Login",
+                        message: translateErrorCode(error.code),
+                        color: "red",
+                        autoClose: 3000,
+                        withCloseButton: true,
+                        loading: false
+                    })
+                })
+
+        }).catch((error: FirebaseError) => {
             notifications.update({
                 id: "login",
                 title: "Login",
@@ -128,18 +149,44 @@ const LoginPage: NextPage = () => {
             })
             fire.signInWithProvider(provider).then((creds) => {
                 auth.updateCurrentUser(creds.user)
-                notifications.update({
-                    id: "login",
-                    title: "Login",
-                    message: "Login feito com sucesso!",
-                    color: "green",
-                    autoClose: 5000,
-                    withCloseButton: true,
-                    loading: false
-                })
+                    .then(() => {
+                        notifications.update({
+                            id: "login",
+                            title: "Login",
+                            message: "Login feito com sucesso!",
+                            color: "green",
+                            autoClose: 5000,
+                            withCloseButton: true,
+                            loading: false
+                        })
+                    })
+                    .catch((error: FirebaseError) => {
+                        notifications.update({
+                            id: "login",
+                            title: "Login",
+                            message: translateErrorCode(error.code),
+                            color: "red",
+                            autoClose: 5000,
+                            withCloseButton: true,
+                            loading: false
+                        })
+                    })
                 updateCurrentUser(auth, auth.currentUser)
-                router.push("/account")
-            }).catch((error) => {
+                    .then(() => {
+                        location.href = "/account"
+                    })
+                    .catch((error: FirebaseError) => {
+                        notifications.update({
+                            id: "login",
+                            title: "Login",
+                            message: translateErrorCode(error.code),
+                            color: "red",
+                            autoClose: 5000,
+                            withCloseButton: true,
+                            loading: false
+                        })
+                    })
+            }).catch((error: FirebaseError) => {
                 notifications.update({
                     id: "login",
                     title: "Login",

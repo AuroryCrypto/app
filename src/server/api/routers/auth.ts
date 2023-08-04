@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { authenticatedProcedure, createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { authenticatedProcedure, createTRPCRouter } from "@/server/api/trpc";
+import { userInfoSchema } from "@/shared/validators";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
-import { userInfoSchema } from "@/shared/validators";
+import { z } from "zod";
 
 export const authRouter = createTRPCRouter({
     getSession: authenticatedProcedure
@@ -13,11 +13,11 @@ export const authRouter = createTRPCRouter({
         }),
     updateUserName: authenticatedProcedure
         .input(z.object({ name: z.string() }))
-        .mutation(({ input, ctx }) => {
+        .mutation( async ({ input, ctx }) => {
             if (!ctx.session) {
                 throw new Error("No UID found in session");
             }
-            getAuth().updateUser(ctx.session.uid, { displayName: input.name })
+            await getAuth().updateUser(ctx.session.uid, { displayName: input.name })
         }),
     saveUserInfo: authenticatedProcedure
         .input(userInfoSchema)

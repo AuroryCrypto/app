@@ -1,5 +1,5 @@
 import { getFirestore } from "firebase-admin/firestore";
-import { UserInfo, UserInfoRepository } from "../UserInfoRepository";
+import { type UserInfo, type UserInfoRepository } from "../UserInfoRepository";
 
 export class UserInfoRepositoryFirebase implements UserInfoRepository {
     private db: FirebaseFirestore.Firestore = getFirestore()
@@ -30,9 +30,8 @@ export class UserInfoRepositoryFirebase implements UserInfoRepository {
             id: this.userId,
         } as UserInfo;
     }
-    async deleteUserInfo(): Promise<{}> {
+    async deleteUserInfo(): Promise<void> {
         await this.collection.doc(this.userId).delete();
-        return await Promise.resolve("User info deleted");
     }
 
 }

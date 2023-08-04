@@ -1,17 +1,16 @@
 'use client'
 
 import { env } from "@/env.mjs";
-import { api, setFirebaseIdToken } from "@/utils/api";
-import { createContext, useContext, useEffect, useState } from "react";
+import { type Asset } from "@/repositories/AssetsRepository";
+import { type UserAsset } from "@/repositories/UserAssetsRepository";
+import { type UserTransaction } from "@/repositories/UserTransactionsRepository";
+import { setFirebaseIdToken } from "@/utils/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { getApp, getApps, initializeApp, type FirebaseError } from "firebase/app";
+import { GoogleAuthProvider, OAuthProvider, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword as signInWithEmailAndPasswordFB, signInWithPopup, type User } from "firebase/auth";
+import { collection, getFirestore, limit, onSnapshot, orderBy, query, type QueryConstraint } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { collection, getFirestore, getDocs, query, limit, orderBy, onSnapshot, QueryNonFilterConstraint, QueryConstraint } from "firebase/firestore";
-import { type User, GoogleAuthProvider, getAuth, OAuthProvider, signInWithPopup, signInWithEmailAndPassword as signInWithEmailAndPasswordFB, createUserWithEmailAndPassword } from "firebase/auth";
-import { UserTransaction } from "@/repositories/UserTransactionsRepository";
-import { UserAsset } from "@/repositories/UserAssetsRepository";
-import { Asset } from "@/repositories/AssetsRepository";
-import { set } from "zod";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const app = getApps().length ? getApp() : initializeApp({
     apiKey: env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -78,12 +77,16 @@ function useAuth() {
 
     return {
         auth,
-        user,
+        // user,
         // updateUser: () => getAuth().updateCurrentUser(getAuth().),
         logout: () => {
             getAuth().signOut().then(() => {
                 setUser(null);
-                router.push('/')
+                router.push('/').catch((error) => {
+                    console.error(error);
+                })
+            }).catch((error) => {
+                console.error(error);
             })
         },
     };
@@ -95,6 +98,8 @@ function useLoginObserver() {
             console.log('user', user);
             user?.getIdToken().then(idToken => {
                 setFirebaseIdToken(idToken);
+            }).catch((error: FirebaseError) => {
+                console.error(error);
             })
         });
         return () => unsubscribe();
@@ -107,10 +112,16 @@ export const FirebaseQueryContext = createContext<{
     addRefetch: (refetch: () => void) => void;
     removeRefetch: (refetch: () => void) => void;
 }>({
-    refetchAll: () => {},
+    refetchAll: () => {
+        throw new Error("refetchAll not implemented");
+    },
     refetchList: [],
-    addRefetch: () => {},
-    removeRefetch: () => {},
+    addRefetch: () => {
+        throw new Error("addRefetch not implemented");
+    },
+    removeRefetch: () => {
+        throw new Error("removeRefetch not implemented");
+    },
 })
 
 export const useFirebaseQueryContext = () => useContext(FirebaseQueryContext);
@@ -149,12 +160,12 @@ function useFirebaseQuery<T>(path: string, ...options: QueryConstraint[]) {
     useEffect(() => {
         const unsubscribe = onSnapshot(query(collection(getFirestore(), path), ...options), (querySnapshot) => {
             console.log('[useFirebaseQuery][', path, '] ', querySnapshot.size, ' documents', querySnapshot.docs);
-            const documents: any[] = [];
+            const documents: T[] = [];
             querySnapshot.forEach((doc) => {
                 documents.push({
                     id: doc.id,
                     ...doc.data(),
-                });
+                } as T);
             });
             setData(documents as T);
             setLoading(false);
@@ -214,11 +225,6 @@ export function useAssets() {
 export {
     app,
     auth,
-    authProviders,
-    useUser,
-    useAuth,
-    useLoginObserver,
-    signInWithProvider,
-    signInWithEmailAndPassword,
-    signUpWithEmailAndPassword,
-}
+    authProviders, signInWithEmailAndPassword, signInWithProvider, signUpWithEmailAndPassword, useAuth,
+    useLoginObserver, useUser
+};

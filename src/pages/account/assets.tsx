@@ -4,7 +4,7 @@ import PageCard from "@/components/Dashboard/PageCard";
 import { currencyIconMap } from "@/components/Icons";
 import { useBalance } from "@/lib/firebase/client";
 import { Group, Text, createStyles } from "@mantine/core";
-import { NextPage } from "next";
+import { type NextPage } from "next";
 
 const useStyles = createStyles((theme) => ({
     message: {
@@ -18,9 +18,9 @@ const AssetsPage: NextPage = () => {
     const { data, error, loading } = useBalance()
     const {classes} = useStyles()
 
-    const items = data?.map((item) => {
+    const items = data?.map((item, idx) => {
         const Icon = currencyIconMap[item.symbol]
-        return <ListCardItem leftIcon={Icon}>
+        return <ListCardItem leftIcon={Icon} key={idx}>
             <Group
                 position="apart"
                 noWrap

@@ -1,6 +1,6 @@
 import LandingLayout from "@/components/Landing/Layout";
-import { Grid, Text, Title } from "@mantine/core";
-import { NextPage } from "next";
+import { Grid, Text } from "@mantine/core";
+import { type NextPage } from "next";
 
 const FinishingRegisterPage: NextPage = () => {
     return <LandingLayout>

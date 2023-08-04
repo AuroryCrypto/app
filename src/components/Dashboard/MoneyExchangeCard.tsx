@@ -6,7 +6,7 @@ import { useReducer } from "react";
 import { useSetState } from "@mantine/hooks";
 import { currencyIconMap } from "../Icons";
 import { useBalance } from "@/lib/firebase/client";
-import { UserAsset } from "@/repositories/UserAssetsRepository";
+import { type UserAsset } from "@/repositories/UserAssetsRepository";
 
 
 const useMoneyExchangeCardStyles = createStyles((theme) => ({

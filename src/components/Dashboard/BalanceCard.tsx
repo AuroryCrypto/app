@@ -2,7 +2,7 @@
 
 import { useAuth, useBalance, useFirebaseContext } from "@/lib/firebase/client";
 import { moneyFormatter } from "@/utils/formatter";
-import { Avatar, Group, createStyles, Text, ActionIcon, Card, Menu, HoverCard, Skeleton, JsonInput } from "@mantine/core";
+import { Avatar, Group, createStyles, Text, ActionIcon, Card, HoverCard } from "@mantine/core";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaGear } from 'react-icons/fa6';
 
@@ -35,7 +35,7 @@ const useStyles = createStyles((theme) => ({
 const BalanceCard: React.FC = ({ }) => {
     const { classes } = useStyles();
     const { logout } = useAuth()
-    const { auth, user } = useFirebaseContext()
+    const { user } = useFirebaseContext()
     const { data: balances, loading } = useBalance()
 
     return (

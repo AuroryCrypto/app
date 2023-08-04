@@ -1,6 +1,6 @@
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
-import { UserAsset, UserAssetsRepository } from "../UserAssetsRepository";
-import { AssetsRepository } from "../AssetsRepository";
+import { type UserAsset, type UserAssetsRepository } from "../UserAssetsRepository";
+import { type AssetsRepository } from "../AssetsRepository";
 
 export class UserAssetsRepositoryFirebase implements UserAssetsRepository {
     private db: FirebaseFirestore.Firestore;

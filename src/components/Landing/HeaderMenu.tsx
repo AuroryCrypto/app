@@ -1,45 +1,26 @@
+import * as fire from "@/lib/firebase/client";
 import {
-    createStyles,
-    Header,
-    HoverCard,
-    Group,
-    Button,
-    UnstyledButton,
-    Text,
-    SimpleGrid,
-    ThemeIcon,
+    ActionIcon,
     Anchor,
-    Divider,
-    Center,
     Box,
     Burger,
+    Button,
+    Divider,
     Drawer,
-    Collapse,
-    ScrollArea,
-    rem,
-    Avatar,
+    Group,
+    Header,
     Menu,
-    ActionIcon,
+    ScrollArea,
+    createStyles,
+    rem
 } from '@mantine/core';
-//   import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
-import {
-    IconNotification,
-    IconCode,
-    IconBook,
-    IconChartPie3,
-    IconFingerprint,
-    IconCoin,
-    IconChevronDown,
-} from '@tabler/icons-react';
-import * as fire from "@/lib/firebase/client"
-import Logo from "@/components/Logo.svg"
-import Image from 'next/image';
 import Link from 'next/link';
 import { FaGear } from 'react-icons/fa6';
+import Logo from '../Logo';
 
 const useStyles = createStyles((theme) => ({
-    link: {
+    'link': {
         display: 'flex',
         alignItems: 'center',
         height: '100%',
@@ -60,9 +41,8 @@ const useStyles = createStyles((theme) => ({
         ...theme.fn.hover({
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
         }),
-    },
-
-    subLink: {
+    } satisfies React.CSSProperties,
+    'subLink': {
         width: '100%',
         padding: `${theme.spacing.xs} ${theme.spacing.md}`,
         borderRadius: theme.radius.md,
@@ -72,8 +52,7 @@ const useStyles = createStyles((theme) => ({
         }),
 
         '&:active': theme.activeStyles,
-    },
-
+    } satisfies React.CSSProperties,
     dropdownFooter: {
         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
         margin: `calc(${theme.spacing.md} * -1)`,
@@ -83,13 +62,11 @@ const useStyles = createStyles((theme) => ({
         borderTop: `${rem(1)} solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1]
             }`,
     },
-
     hiddenMobile: {
         [theme.fn.smallerThan('sm')]: {
             display: 'none',
         },
     },
-
     hiddenDesktop: {
         [theme.fn.largerThan('sm')]: {
             display: 'none',
@@ -97,74 +74,74 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const mockdata = [
-    {
-        icon: IconCode,
-        title: 'Open source',
-        description: 'This Pokémon’s cry is very loud and distracting',
-    },
-    {
-        icon: IconCoin,
-        title: 'Free for everyone',
-        description: 'The fluid of Smeargle’s tail secretions changes',
-    },
-    {
-        icon: IconBook,
-        title: 'Documentation',
-        description: 'Yanma is capable of seeing 360 degrees without',
-    },
-    {
-        icon: IconFingerprint,
-        title: 'Security',
-        description: 'The shell’s rounded shape and the grooves on its.',
-    },
-    {
-        icon: IconChartPie3,
-        title: 'Analytics',
-        description: 'This Pokémon uses its flying ability to quickly chase',
-    },
-    {
-        icon: IconNotification,
-        title: 'Notifications',
-        description: 'Combusken battles with the intensely hot flames it spews',
-    },
-];
+// const mockdata = [
+//     {
+//         icon: IconCode,
+//         title: 'Open source',
+//         description: 'This Pokémon’s cry is very loud and distracting',
+//     },
+//     {
+//         icon: IconCoin,
+//         title: 'Free for everyone',
+//         description: 'The fluid of Smeargle’s tail secretions changes',
+//     },
+//     {
+//         icon: IconBook,
+//         title: 'Documentation',
+//         description: 'Yanma is capable of seeing 360 degrees without',
+//     },
+//     {
+//         icon: IconFingerprint,
+//         title: 'Security',
+//         description: 'The shell’s rounded shape and the grooves on its.',
+//     },
+//     {
+//         icon: IconChartPie3,
+//         title: 'Analytics',
+//         description: 'This Pokémon uses its flying ability to quickly chase',
+//     },
+//     {
+//         icon: IconNotification,
+//         title: 'Notifications',
+//         description: 'Combusken battles with the intensely hot flames it spews',
+//     },
+// ];
 
 export function HeaderMenu() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-    const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
+    // const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
     const { classes, theme } = useStyles();
-    const { user, auth } = fire.useAuth()
+    const { logout } = fire.useAuth()
+    const { user } = fire.useFirebaseContext()
 
-    const links = mockdata.map((item) => (
-        <UnstyledButton className={classes.subLink} key={item.title}>
-            <Group noWrap align="flex-start">
-                <ThemeIcon size={34} variant="default" radius="md">
-                    <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
-                </ThemeIcon>
-                <div>
-                    <Text size="sm" fw={500}>
-                        {item.title}
-                    </Text>
-                    <Text size="xs" color="dimmed">
-                        {item.description}
-                    </Text>
-                </div>
-            </Group>
-        </UnstyledButton>
-    ));
+    // const links = mockdata.map((item) => (
+    //     <UnstyledButton className={classes.subLink} key={item.title}>
+    //         <Group noWrap align="flex-start">
+    //             <ThemeIcon size={34} variant="default" radius="md">
+    //                 <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
+    //             </ThemeIcon>
+    //             <div>
+    //                 <Text size="sm" fw={500}>
+    //                     {item.title}
+    //                 </Text>
+    //                 <Text size="xs" color="dimmed">
+    //                     {item.description}
+    //                 </Text>
+    //             </div>
+    //         </Group>
+    //     </UnstyledButton>
+    // ));
 
     return (
         <Box pb={0}>
             <Header height={60} px="md">
                 <Group position="apart" sx={{ height: '100%' }}>
-                    {/* <MantineLogo size={30} /> */}
-                    <Image src={Logo} height={60} width={60} alt="Aurory logo" />
+                    <Logo height={60} width={60} />
 
                     <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
-                        <a href="/" className={classes.link}>
+                        <Anchor component={Link} href="/" className={classes.link}>
                             Home
-                        </a>
+                        </Anchor>
                         {/* <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                             <HoverCard.Target>
                                 <a href="#" className={classes.link}>
@@ -213,7 +190,7 @@ export function HeaderMenu() {
                         {/* <a href="#" className={classes.link}>
                             Lorem Ipsum
                         </a> */}
-                    </Group>
+                    L</Group>
 
                     {!user ? <Group className={classes.hiddenMobile}>
                         <Button variant="default" component={Link} href='/auth/login'>Entrar</Button>
@@ -225,7 +202,7 @@ export function HeaderMenu() {
                                 <ActionIcon><FaGear /></ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
-                                <Menu.Item onClick={() => auth.signOut()}><>Sair</></Menu.Item>
+                                <Menu.Item onClick={() => logout()}>Sair</Menu.Item>
                             </Menu.Dropdown>
                         </Menu>
                     </Group>}

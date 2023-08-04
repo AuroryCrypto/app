@@ -3,7 +3,7 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { forwardRef } from "react";
 import { FaCcVisa, FaCircle, FaCircleDot, FaCreditCard, FaMoneyBillTransfer, FaMoneyBills, FaPlus } from "react-icons/fa6";
-import { IconType } from "react-icons/lib";
+import { type IconType } from "react-icons/lib";
 import DepositForm from "./Forms/DepositForm";
 import WithdrawForm from "./Forms/WithdrawForm";
 import { useQueryClient } from "@tanstack/react-query";

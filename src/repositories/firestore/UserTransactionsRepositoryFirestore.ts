@@ -1,4 +1,4 @@
-import { UserTransaction, UserTransactionsRepository } from "../UserTransactionsRepository";
+import { type UserTransaction, type UserTransactionsRepository } from "../UserTransactionsRepository";
 import { getFirestore } from "firebase-admin/firestore";
 
 export class UserTransactionsRepositoryFirestore implements UserTransactionsRepository {
@@ -39,8 +39,7 @@ export class UserTransactionsRepositoryFirestore implements UserTransactionsRepo
             id: transactionId,
         } as UserTransaction;
     }
-    async deleteUserTransaction(transactionId: string): Promise<{}> {
+    async deleteUserTransaction(transactionId: string): Promise<void> {
         await this.collection.doc(transactionId).delete();
-        return await Promise.resolve("Transaction deleted");
     }
 }

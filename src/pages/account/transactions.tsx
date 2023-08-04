@@ -1,6 +1,6 @@
 import Layout from "@/components/Dashboard/Layout";
 import TransactionsCard from "@/components/Dashboard/TransactionsCard";
-import { NextPage } from "next";
+import { type NextPage } from "next";
 
 const TransactionsPage: NextPage = () => {
     return <Layout>

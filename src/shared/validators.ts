@@ -1,4 +1,3 @@
-import { DocumentReference } from "firebase-admin/firestore";
 import { z } from "zod";
 
 export const userInfoSchema = z.object({

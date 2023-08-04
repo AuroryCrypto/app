@@ -1,9 +1,9 @@
-import { Asset } from "./AssetsRepository"
+import { type Asset } from "./AssetsRepository"
 
 export interface UserAsset extends Asset {
     amount: number
 
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
     createdAt: Date
     updatedAt: Date
 }
