@@ -190,7 +190,7 @@ export function HeaderMenu() {
                         {/* <a href="#" className={classes.link}>
                             Lorem Ipsum
                         </a> */}
-                    L</Group>
+                    </Group>
 
                     {!user ? <Group className={classes.hiddenMobile}>
                         <Button variant="default" component={Link} href='/auth/login'>Entrar</Button>
